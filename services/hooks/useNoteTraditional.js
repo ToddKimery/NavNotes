@@ -58,22 +58,22 @@ export function useToggleCompletion() {
   const queryClient = useQueryClient()
   const { mutate: toggleCompletionMutation } = useMutation({
     mutationKey: [queryKeys.toggleCompletion],
-    mutationFn: async ({ id, updateStatus }) => {
+    mutationFn: async ({ id, updateStatus, type, title }) => {
       const response = await fetch(`/api/notes`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, updateStatus }),
+        body: JSON.stringify({ id, updateStatus, type, title }),
       })
 
-      if (!response.ok) {
+      if (!response.status === 'success') {
         throw new Error('Network response was not ok')
       }
 
-      return response.json()
+      return { type, id }
     },
-    onSuccess: () => {
+    onSuccess: ({ type, id }) => {
       queryClient.invalidateQueries(queryKeys.notes)
     },
     onError: error => {
@@ -90,7 +90,7 @@ export function useGetNotes() {
     queryKey: [queryKeys.allNotes],
     queryFn: async () => {
       const response = await fetch('/api/notes')
-      if (!response.ok) {
+      if (!response.status === 'success') {
         throw new Error('Network response was not ok')
       }
 

@@ -1,17 +1,21 @@
-'use client'
+// 'use client'
+// import { useEffect, useState } from 'react'
 import Navbar from '@/components/navigation/Navbar'
-import styles from 'styled-components'
+import styled from 'styled-components'
+import { supabase } from '@/utils/supabase/supabase'
+import { LayoutStyled } from '@/components/containers/LayoutStyled'
 
-const LayoutStyled = styles.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
+export default async function LayoutContainer({ children }) {
+  const { data, error: userError } = await supabase.auth.getUser()
 
-export default function LayoutContainer({ children }) {
+  console.log('data: ', data)
+  if (userError) {
+    console.error('getUser error: ', userError || null)
+  }
+  console.log('data from LayoutContainer: ', data)
   return (
     <LayoutStyled>
-      <Navbar />
+      <Navbar data={data} />
       {children}
     </LayoutStyled>
   )

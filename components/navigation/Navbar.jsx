@@ -1,48 +1,47 @@
 // 'use client'
-import styled from 'styled-components'
+// import styled from 'styled-components'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import Header from '@/components/Header'
+import { createClient } from '@/utils/supabase/server'
+import {
+  NavBarStyled,
+  LogoStyled,
+  LoginStyled,
+} from '@/components/navigation/NavbarStyled'
 
-const NavbarStyled = styled.div`
-  width: 100vw;
-  height: 50px;
-  background-color: #8758ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* margin: 3rem auto; */
-  padding: 1rem;
-`
-const LogoStyled = styled.div`
-  display: flex;
-  background: #4328b9;
-  width: 45px;
-  height: 45px;
-  margin-left: 10px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  font-size: 3rem;
-  border-radius: 3px;
-`
+export default async function Navbar() {
+  'use server'
+  const supabase = createClient()
 
-const LoginStyled = styled.button`
-  width: 70px;
-  height: 30px;
-  background: #4328b9;
-  margin-right: 2rem;
-  border-radius: 3px;
-`
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  // console.log('user: ', user)
 
-const Navbar = () => {
+  const signOut = async () => {
+    'use server'
+    const supabase = createClient()
+    const { data } = await supabase.auth.signOut()
+    const user = data?.user
+    return redirect('/login')
+  }
+  // console.log('data: ', user)
+  // const user = data.session.user
+  // console.log('data: ', data.session.user)
   return (
-    <NavbarStyled>
+    <NavBarStyled>
       <LogoStyled> N </LogoStyled>
       <div>middle</div>
       <LoginStyled>
-        <Link href={'/login'}>Login</Link>
+        {!user ? (
+          <Link href={'/login'}>Login</Link>
+        ) : (
+          <form action={signOut}>
+            <button>Logout</button>
+          </form>
+        )}
       </LoginStyled>
-    </NavbarStyled>
+    </NavBarStyled>
   )
 }
-
-export default Navbar

@@ -9,7 +9,7 @@ const StyledNote = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #8758ff;
+  background: ${props => props.color || '#8758ff'};
   color: #fff;
   padding: 0.75rem 1rem;
   border-radius: 5px;
@@ -36,17 +36,21 @@ export const Note = ({
   editNote,
   toggleCompletion,
   state,
+  color,
 }) => {
   console.log('from Note.jsx: ', status)
   console.log('state from Note.jsx: ', state)
   return (
-    <StyledNote className={`${status ? 'completed' : 'incomplete'}`}>
+    <StyledNote
+      color={color}
+      className={`${status ? 'completed' : 'incomplete'}`}
+    >
       <p
         // className={`${status ? 'completed' : 'incomplete'}`}
         onClick={() => {
-          console.log('from Note.jsx: ', !status)
           let updateStatus = !status
-          toggleCompletion({ id, updateStatus })
+          let type = 'toggleCompletion'
+          toggleCompletion({ id, updateStatus, type })
         }}
       >
         {task}
@@ -55,7 +59,10 @@ export const Note = ({
         <FontAwesomeIcon
           className='edit-icon'
           icon={faPenToSquare}
-          onClick={() => editNote(key)}
+          onClick={() => {
+            let type = 'editNote'
+            toggleCompletion({ id, type })
+          }}
         />
         <FontAwesomeIcon
           className='delete-icon'
