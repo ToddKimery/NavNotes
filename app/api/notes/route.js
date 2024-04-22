@@ -11,7 +11,7 @@ export const GET = async req => {
   return NextResponse.json(notes)
 }
 
-export async function deleteNote(id) {
+export const deleteNote = async id => {
   const { error } = await supabase.from('notes').delete().eq('id', id)
   if (error) {
     throw error

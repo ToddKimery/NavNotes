@@ -1,6 +1,3 @@
-import { getAllNotes } from '@/pages/api/notesApi'
-import { toggleCompletion } from './api/notesApi'
-
 export const queryKeys = {
   allNotes: 'allNotes',
   ssrNotes: 'ssrNotes',

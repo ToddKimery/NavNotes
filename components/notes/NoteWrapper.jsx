@@ -5,6 +5,7 @@ import { Note } from './Note'
 import { NoteForm } from './NoteForm'
 import { EditNoteForm } from './EditNoteForm'
 import styles from 'styled-components'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { useEffect } from 'react'
 // import { deleteNote, addNote, toggleCompletion } from '@/services/api/notesApi'
 import { getNotes } from '@/services/api/notesApi'
@@ -103,25 +104,31 @@ function NoteWrapper({ userData, state }) {
       )}
       <NoteForm addNote={addNoteMutation} />
       {/* display notes */}
-      {Array.isArray(notes) &&
-        notes.map(note =>
-          note.isEditing ? (
-            <EditNoteForm editNote={editTask} task={note} />
-          ) : (
-            Array.isArray(notes) && (
-              <Note
-                id={note.id}
-                key={note.id}
-                task={note.title}
-                status={note.completed}
-                deleteNote={deleteNoteMutation}
-                editNote={editNote}
-                toggleCompletion={toggleCompletionMutation}
-                state={state}
-              />
-            )
-          )
-        )}
+      <TransitionGroup>
+        {Array.isArray(notes) &&
+          notes
+            .sort((a, b) => a.completed - b.completed)
+            .map(note =>
+              note.isEditing ? (
+                <EditNoteForm editNote={editTask} task={note} />
+              ) : (
+                Array.isArray(notes) && (
+                  <CSSTransition key={note.id} timeout={500} classNames='item'>
+                    <Note
+                      id={note.id}
+                      key={note.id}
+                      task={note.title}
+                      status={note.completed}
+                      deleteNote={deleteNoteMutation}
+                      editNote={editNote}
+                      toggleCompletion={toggleCompletionMutation}
+                      state={state}
+                    />
+                  </CSSTransition>
+                )
+              )
+            )}
+      </TransitionGroup>
       {!Array.isArray(notes) || (notes.length === 0 && <p>No tasks yet</p>)}
       {state}
     </NoteWrapperStyled>
