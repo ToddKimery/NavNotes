@@ -40,11 +40,9 @@ export const DELETE = async (req, res) => {
 export const PATCH = async (req, res) => {
   const supabase = createClient()
   const getData = await req.json()
-  const { id, type, title } = getData
+  const { id, type, title, updateStatus } = getData
   switch (type) {
     case 'toggleCompletion':
-      console.log('PATCH on API', getData)
-      const { updateStatus } = getData
       const { data: status, error: statusError } = await supabase
         .from('notes')
         .update({ completed: updateStatus })
@@ -53,20 +51,10 @@ export const PATCH = async (req, res) => {
         console.log(statusError)
         throw statusError
       }
-
-      return
-      status
-      // NextResponse.json({
-      //   message: 'Status PATCH request received',
-      //   id: id,
-      //   completed: updateStatus,
-      //   type: type,
-      // })
+      return new NextResponse(status)
       break
 
     case 'editNote':
-      console.log('PATCH on API', getData)
-      const { id: editId } = getData
       const { data: edit, error: editError } = await supabase
         .from('notes')
         .update({ editing: true })
@@ -74,44 +62,31 @@ export const PATCH = async (req, res) => {
       if (editError) {
         throw editError
       }
-
-      return NextResponse.json({
-        message: 'Edit PATCH request received',
-        id: id,
-        editing: editing,
-        type: type,
-      })
+      return new NextResponse(edit)
       break
+
     case 'cancelEdit':
-      console.log('Cancel Edit: ', getData)
-      const { id: cancelEditId } = getData
       const { data: cancelEdit, error: cancelEditError } = await supabase
         .from('notes')
         .update({ editing: false })
-        .eq('id', cancelEditId)
+        .eq('id', id)
       if (cancelEditError) {
         throw new Error(cancelEditError)
       }
-
-      return cancelEdit
-
+      return new NextResponse(cancelEdit)
       break
 
     case 'updateEdit':
-      console.log('Update Edit: ', getData)
-      const { id, title: updateTitle } = getData
       const { data: updateEdit, error: updateEditError } = await supabase
         .from('notes')
-        .update({ title: updateTitle, editing: false })
+        .update({ title: title, editing: false })
         .eq('id', id)
-      if (editError) {
-        throw editError
+      if (updateEditError) {
+        throw updateEditError
       }
-
-      return
-      data
-
+      return new NextResponse(updateEdit)
       break
+
     case 'default':
       return res.status(405).json({ error: 'Method Not Allowed' })
   }

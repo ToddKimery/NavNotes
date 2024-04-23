@@ -1,12 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+
 import { Note } from './Note'
 import { NoteForm } from './NoteForm'
 import { EditNoteForm } from './EditNoteForm'
 import styles from 'styled-components'
-import { useEffect } from 'react'
-import { QueryClient, useQuery } from '@tanstack/react-query'
+
 
 import {
   useDeleteNote,
@@ -14,7 +13,7 @@ import {
   useToggleCompletion,
   useGetNotes,
 } from '@/services/hooks/useNoteTraditional'
-import { queryKeys } from '@/services/constants'
+
 
 const NoteWrapperStyled = styles.div`
   background: #1a1a40;
@@ -40,13 +39,7 @@ function NoteWrapper({ userData }) {
   const { toggleCompletionMutation } = useToggleCompletion()
   const { data: notes, isLoading } = useGetNotes()
 
-  const editNote = id => {
-    setNotes(
-      notes.map(note =>
-        note.id === id ? { ...note, isEditing: !note.isEditing } : note
-      )
-    )
-  }
+
 
   const editTask = (task, id) => {
     setNotes(
@@ -66,22 +59,30 @@ function NoteWrapper({ userData }) {
       <NoteForm addNote={addNoteMutation} />
 
       {Array.isArray(notes) &&
-        notes.map(note =>
-          note.editing ? (
-            <EditNoteForm editNote={editTask} task={note.title} id={note.id} />
-          ) : (
-            Array.isArray(notes) && (
-              <Note
-                id={note.id}
-                key={note.id}
+        notes
+          .sort((a, b) => {
+          return(  a.priority - b.priority)
+          })
+          .map(note =>
+            note.editing ? (
+              <EditNoteForm
+                editNote={editTask}
                 task={note.title}
-                status={note.completed}
-                deleteNote={deleteNoteMutation}
-                toggleCompletion={toggleCompletionMutation}
+                id={note.id}
               />
+            ) : (
+              Array.isArray(notes) && (
+                <Note
+                  id={note.id}
+                  key={note.id}
+                  task={note.title}
+                  status={note.completed}
+                  deleteNote={deleteNoteMutation}
+                  toggleCompletion={toggleCompletionMutation}
+                />
+              )
             )
-          )
-        )}
+          )}
       {!Array.isArray(notes) || (notes.length === 0 && <p>No tasks yet</p>)}
     </NoteWrapperStyled>
   )

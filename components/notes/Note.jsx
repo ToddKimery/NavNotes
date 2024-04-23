@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { styled } from 'styled-components'
+import {Draggable} from 'react-beautiful-dnd'
 
 const StyledNote = styled.div`
   display: flex;
@@ -33,17 +34,18 @@ export const Note = ({
   task,
   status,
   deleteNote,
-  editNote,
   toggleCompletion,
-  state,
   color,
+  priority,
+  editNote,
 }) => {
-  console.log('from Note.jsx: ', status)
-  console.log('state from Note.jsx: ', state)
+
   return (
+
     <StyledNote
       color={color}
       className={`${status ? 'completed' : 'incomplete'}`}
+      key={priority}
     >
       <p
         // className={`${status ? 'completed' : 'incomplete'}`}
@@ -55,7 +57,7 @@ export const Note = ({
       >
         {task}
       </p>
-      <div>
+      <div >
         <FontAwesomeIcon
           className='edit-icon'
           icon={faPenToSquare}
@@ -71,5 +73,6 @@ export const Note = ({
         />
       </div>
     </StyledNote>
+    
   )
 }

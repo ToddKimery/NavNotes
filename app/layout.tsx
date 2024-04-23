@@ -3,6 +3,8 @@ import './globals.css'
 import ReactQueryClientProvider from '@/components/ReactQueryClientProvider'
 import LayoutContainer from '@/components/containers/LayoutContainer'
 
+
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000'
