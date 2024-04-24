@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { styled } from 'styled-components'
-import {Draggable} from 'react-beautiful-dnd'
 
 const StyledNote = styled.div`
   display: flex;
@@ -17,6 +16,7 @@ const StyledNote = styled.div`
   margin-bottom: 1rem;
   cursor: pointer;
 
+
   &.incomplete {
     color: #fff;
   }
@@ -27,7 +27,12 @@ const StyledNote = styled.div`
     background-color: #8f8e8e;
     color: black;
   }
+  & p {
+      margin-left: 1.25rem;
+      width:75%
+  }
 `
+
 
 export const Note = ({
   id,
@@ -47,6 +52,7 @@ export const Note = ({
       className={`${status ? 'completed' : 'incomplete'}`}
       key={priority}
     >
+    
       <p
         // className={`${status ? 'completed' : 'incomplete'}`}
         onClick={() => {

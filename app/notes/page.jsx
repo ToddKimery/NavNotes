@@ -6,7 +6,8 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 
-import { Suspense } from 'react'
+
+
 export const metadata = {
   title: 'Notes 3.0',
   description: 'The best way to stay on top of your game.',
@@ -44,6 +45,7 @@ export default async function Notes() {
       </Head>
 
         <NoteWrapper notes={notes} userData={userData} />
+
 
     </>
   )

@@ -28,10 +28,18 @@ const NoteWrapperStyled = styles.div`
   text-align:center;
   }
   & p{
-    text-align: center;
+    text-align: left;
     font-style: italic;
   }
 `
+
+const SpinnerContainer = styles.div`
+  display: flex;
+  align-contents: center;
+  justify-content: center;
+  width: 100%;
+  height: 60%;
+  `
 
 function NoteWrapper({ userData }) {
   const { deleteNoteMutation } = useDeleteNote()
@@ -58,10 +66,12 @@ function NoteWrapper({ userData }) {
       )}
       <NoteForm addNote={addNoteMutation} />
 
-      {Array.isArray(notes) &&
+      {!Array.isArray(notes)?(<SpinnerContainer>
+        Loading data...
+      </SpinnerContainer> ) : 
         notes
           .sort((a, b) => {
-          return(  a.priority - b.priority)
+          return(a.priority - b.priority)
           })
           .map(note =>
             note.editing ? (
@@ -89,3 +99,4 @@ function NoteWrapper({ userData }) {
 }
 
 export default NoteWrapper
+

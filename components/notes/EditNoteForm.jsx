@@ -28,8 +28,9 @@ const ButtonContainer = styled.div`
 const NoteButton = styled.button`
   text-align: center;
   background: ${props => props.color || '#ec2020'};
+  border: 1px solid rgba(255,255,255,.9);
   color: #fff;
-  border: none;
+  /* border: none; */
   padding: 0.55rem;
   cursor: pointer;
   width: 45%;
@@ -38,11 +39,12 @@ const NoteButton = styled.button`
   border-radius: 10px;
 
   &:hover {
-    background-color: rgba(236, 32, 3, 0.8);
+    background-color: ${props => props.hover ||'rgba(236, 32, 3, 0.8)'};
   }
   &:active {
-    background-color: rgba(151, 22, 24, 0.9);
-    border: 1px solid #000;
+    transform: scale(0.95);
+    background-color: ${props=>props.hover  ||' rgba(151, 22, 24, 0.9)'};
+    border: 2px solid rgba(255,255,255,.4);
   }
 `
 const EditNoteContainer = styled.div`
@@ -51,12 +53,11 @@ const EditNoteContainer = styled.div`
 
 export const EditNoteForm = ({ task, id }) => {
   const { toggleCompletionMutation } = useToggleCompletion()
-  const [value, setValue] = useState(task.task)
+  const [value, setValue] = useState(task)
 
   const handleSubmit = e => {
-    // prevent default action
+  
     e.preventDefault()
-    // console.log('from EditNoteForm: ', id)
     toggleCompletionMutation({
       id: id,
       title: value,
@@ -85,7 +86,7 @@ export const EditNoteForm = ({ task, id }) => {
             placeholder='Update task'
           />
           <ButtonContainer>
-            <NoteButton type='submit' color={'green'}>
+            <NoteButton type='submit' color={'green'} hover={'darkgreen'}>
               Update Note
             </NoteButton>
             <NoteButton

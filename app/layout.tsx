@@ -2,7 +2,7 @@ import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import ReactQueryClientProvider from '@/components/ReactQueryClientProvider'
 import LayoutContainer from '@/components/containers/LayoutContainer'
-
+import Head from 'next/head'
 
 
 const defaultUrl = process.env.VERCEL_URL
@@ -22,6 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className={GeistSans.className}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className='bg-background text-foreground'>
         <ReactQueryClientProvider>
           <LayoutContainer>
