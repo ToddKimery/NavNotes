@@ -10,13 +10,28 @@ export default async function AuthButton() {
     data: { user },
   } = await supabase.auth.getUser()
   // console.log(user)
-  const signOut = async () => {
-    'use server'
 
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    return redirect('/login')
-  }
+
+  const signOut = async () => {
+  'use server'
+
+  const supabase = createClient()
+  await supabase.auth.signOut()
+
+  // Clear the IndexedDB NotesDB
+  const request = indexedDB.deleteDatabase('NotesDB');
+  request.onerror = function(event) {
+    // Handle errors.
+    console.error("Error deleting database.", event);
+  };
+  request.onsuccess = function(event) {
+    // Database deleted successfully
+    console.log("Database deleted successfully");
+  };
+
+  return redirect('/')
+}
+
 
   return user ? (
     <div className='flex items-center gap-4'>

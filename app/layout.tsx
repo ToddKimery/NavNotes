@@ -3,7 +3,7 @@ import './globals.css'
 import ReactQueryClientProvider from '@/components/ReactQueryClientProvider'
 import LayoutContainer from '@/components/containers/LayoutContainer'
 import Head from 'next/head'
-
+import ServiceWorkerReg from '@/components/serviceworker/ServiceWorkerReg'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -27,6 +27,7 @@ export default function RootLayout({
       </head>
       <body className='bg-background text-foreground'>
         <ReactQueryClientProvider>
+        <ServiceWorkerReg/>
           <LayoutContainer>
             <main className='min-h-screen flex flex-col items-center'>
               {children}

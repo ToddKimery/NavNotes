@@ -1,9 +1,10 @@
 'use client'
-import React from 'react'
+import React,{useEffect} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { styled } from 'styled-components'
+import { saveNoteToIDB } from '@/utils/idb'
 
 const StyledNote = styled.div`
   display: flex;
@@ -44,6 +45,9 @@ export const Note = ({
   priority,
   editNote,
 }) => {
+
+
+   
 
   return (
 

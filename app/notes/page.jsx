@@ -8,6 +8,8 @@ import {
 
 
 
+
+
 export const metadata = {
   title: 'Notes 3.0',
   description: 'The best way to stay on top of your game.',
@@ -26,6 +28,8 @@ export default async function Notes() {
 
   const { data: notes } = await supabase.from('notes').select()
   const { data: userData, error } = await supabase.from('users').select()
+
+
 
   supabase
     .channel('custom-all-channel')

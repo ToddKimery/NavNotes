@@ -5,7 +5,7 @@ import { Note } from './Note'
 import { NoteForm } from './NoteForm'
 import { EditNoteForm } from './EditNoteForm'
 import styles from 'styled-components'
-
+import { useEffect, useState } from 'react'
 
 import {
   useDeleteNote,
@@ -13,6 +13,7 @@ import {
   useToggleCompletion,
   useGetNotes,
 } from '@/services/hooks/useNoteTraditional'
+import { clearNotesFromIDB, getNotesFromIDB, saveNoteToIDB } from '@/utils/idb'
 
 
 const NoteWrapperStyled = styles.div`
@@ -42,12 +43,46 @@ const SpinnerContainer = styles.div`
   `
 
 function NoteWrapper({ userData }) {
+  
   const { deleteNoteMutation } = useDeleteNote()
   const { addNoteMutation } = useAddNote()
   const { toggleCompletionMutation } = useToggleCompletion()
-  const { data: notes, isLoading } = useGetNotes()
+  const { data: fetchNotes, isLoading } = useGetNotes()
+  const [notes, setNotes] = useState()
+  const [dbNotes,setDbNotes] = useState()
 
+  
 
+//  useEffect(()=>{
+// function save(id,status,task){
+// console.log({id:{status,task}})
+//   saveNoteToIDB({id,status,task})
+// }
+// save(id,status,task)
+//  },[])
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const dbData = await getNotesFromIDB();
+     
+      if (!isLoading) {
+        console.log("fetchNotes done loading: ", fetchNotes);
+        setNotes(fetchNotes)
+        clearNotesFromIDB()
+        fetchNotes.forEach((note,index) => saveNoteToIDB({...note}))
+        // saveNoteToIDB(...fetchNotes)
+      }else if (dbData.length>0) {
+        console.log('dbData: ',Array.from(dbData))
+        setNotes(dbData)
+        return;
+      } else {
+        setNotes([]);
+      }
+    };
+
+    fetchData();
+  }, [isLoading]);
 
   const editTask = (task, id) => {
     setNotes(
@@ -89,6 +124,7 @@ function NoteWrapper({ userData }) {
                   status={note.completed}
                   deleteNote={deleteNoteMutation}
                   toggleCompletion={toggleCompletionMutation}
+                  note={note}
                 />
               )
             )

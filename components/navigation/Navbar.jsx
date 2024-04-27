@@ -9,6 +9,9 @@ import {
   LogoStyled,
   LoginStyled,
 } from '@/components/navigation/NavbarStyled'
+import { clearNotesFromIDB } from '@/utils/idb'
+
+
 
 export default async function Navbar() {
   'use server'
@@ -20,15 +23,20 @@ export default async function Navbar() {
   // console.log('user: ', user)
 
   const signOut = async () => {
-    'use server'
-    const supabase = createClient()
-    const { data } = await supabase.auth.signOut()
-    const user = data?.user
-    return redirect('/login')
+  'use server'
+
+  const supabase = createClient()
+  await supabase.auth.signOut()
+
+  // Clear the IndexedDB NotesDB
+ try {
+  'use client'
+    await clearNotesFromIDB()
+  } catch (error) { console.error('Error clearing IDB: ', error) }
+
+  return redirect('/')
   }
-  // console.log('data: ', user)
-  // const user = data.session.user
-  // console.log('data: ', data.session.user)
+
   return (
     <NavBarStyled>
       <LogoStyled> N </LogoStyled>

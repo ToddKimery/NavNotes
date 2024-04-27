@@ -86,49 +86,55 @@ export function useToggleCompletion() {
 }
 
 // ### This works server side to get all notes ###
-// export function useGetNotes() {
-//   const { data, isLoading, error } = useQuery({
-//     queryKey: [queryKeys.allNotes],
-//     queryFn: async () => {
-//       const response = await fetch('/api/notes')
-//       if (!response.status === 'success') {
-//         throw new Error('Network response was not ok')
-//       }
-
-//       return response.json()
-//     },
-//     onSuccess: data => console.log('Successfully fetched notes: ', data),
-//     onError: () => console.log('ERROR:', error),
-//   })
-//   return { data, isLoading, error }
-// }
-
 export function useGetNotes() {
-  const queryClient = useQueryClient();
-
   const { data, isLoading, error } = useQuery({
     queryKey: [queryKeys.allNotes],
     queryFn: async () => {
-      try {
-        let notes = await getNotesFromIDB();
-        if (notes.length === 0) {
-          const response = await fetch('/api/notes');
-          if (!response.ok) throw new Error('Network response was not ok');
-          notes = await response.json();
-          notes.forEach(note => saveNoteToIDB(note));
-        }
-        return notes;
-      } catch (err) {
-        console.error('Error fetching notes:', err);
-        throw err;
+      const response = await fetch('/api/notes');
+      if (!response.ok) { // Checks if the status code is not in the range 200-299
+        throw new Error('Network response was not ok');
       }
+      return response.json();
     },
-    onSuccess: data => console.log('Successfully fetched notes: ', data),
-    onError: err => console.log('ERROR:', err),
+    onError: (error) => console.log('ERROR:', error),
   });
 
   return { data, isLoading, error };
 }
+
+
+// #### WORKING TO GET NOTES #####
+// export function useGetNotes() {
+//   const queryClient = useQueryClient();
+
+//   const { data, isLoading, error } = useQuery({
+//     queryKey: [queryKeys.allNotes],
+//     queryFn: async () => {
+//       try {
+//         let notes = await getNotesFromIDB();
+//         if (notes.length === 0) {
+//           const response = await fetch('/api/notes');
+//           if (!response.ok) throw new Error('Network response was not ok');
+//           notes = await response.json();
+//           notes.forEach(note => saveNoteToIDB(note));
+//         }
+//         return notes;
+//       } catch (err) {
+//         console.error('Error fetching notes:', err);
+//         throw err;
+//       }
+//     },
+//     onSuccess: data => console.log('Successfully fetched notes: ', data),
+//     onError: err => console.log('ERROR:', err),
+//   });
+
+//   return { data, isLoading, error };
+// }
+
+
+
+
+
 
 
 

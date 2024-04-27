@@ -32,6 +32,6 @@
     "components/notes/NoteWrapper.jsx",
     "components/ReactQueryClientProvider.tsx",
     "app/ssrnotes/page.jsx"
-, "app/notes/example/page.jsx"  ],
+, "app/notes/example/page.jsx", "app/page.tsx_bk"  ],
   "exclude": ["node_modules"]
 }

@@ -40,19 +40,4 @@ export async function deleteNoteFromIDB(id) {
   return tx.done;
 }
 
-// Clear all notes from IndexedDB
-export async function clearNotesFromIDB() {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  const store = tx.objectStore(STORE_NAME);
-  await store.clear();
-  return tx.done;
-}
-
-// Update a note in IndexedDB
-export async function updateNoteInIDB(note) {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  await tx.store.put(note);
-  return tx.done;
-}
+// More functions can be added as needed
