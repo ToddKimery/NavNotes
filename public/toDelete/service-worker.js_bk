@@ -1,0 +1,33 @@
+importScripts('/path/to/idb-promised.js');
+
+self.addEventListener('fetch', function(event) {
+  if (event.request.url.includes('/api/notes')) {
+    event.respondWith(
+      getNotesFromDB().then(notes => {
+        return notes.length > 0 ?
+          new Response(JSON.stringify(notes), { headers: { 'Content-Type': 'application/json' } }) :
+          fetch(event.request).then(networkResponse => {
+            networkResponse.clone().json().then(notes => {
+              notes.forEach(note => saveItemToDB('note',note));
+            });
+            return networkResponse;
+          });
+      })
+    );
+  }
+  else (event.request.url.includes('/api/training')) {
+    console.log("I saw a request to /api/training")
+    event.respondWith(
+      getNotesFromDB().then(trainings => {
+        return trainings.length > 0 ?
+          new Response(JSON.stringify(trainings), { headers: { 'Content-Type': 'application/json' } }) :
+          fetch(event.request).then(networkResponse => {
+            networkResponse.clone().json().then(training => {
+              training.forEach(course => saveNoteToDB('training',course));
+            });
+            return networkResponse;
+          });
+      })
+    );
+  }
+});

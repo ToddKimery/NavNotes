@@ -6,4 +6,9 @@ export const queryKeys = {
   toggleCompletion: 'toggleCompletion',
   getAllNotes: 'getAllNotes',
   subscribed: 'subscribed',
+  getAllTraining:'getAllTraining',
+  deleteTraining:'deleteTraining',
+  addTraining:'addTraining',
+  editTraining:'editTraining',
+
 }

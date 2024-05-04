@@ -1,4 +1,13 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+// const next = require('next');
 
-module.exports = nextConfig;
+module.exports = {
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // You can modify the config before returning it.
+    return config;
+  }
+};
+
+
+
+
+

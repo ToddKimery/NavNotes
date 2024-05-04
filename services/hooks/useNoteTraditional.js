@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { queryKeys } from '@/services/constants'
 
+
 import {
   addNote,
   // deleteNote,
@@ -58,22 +59,22 @@ export function useToggleCompletion() {
   const queryClient = useQueryClient()
   const { mutate: toggleCompletionMutation } = useMutation({
     mutationKey: [queryKeys.toggleCompletion],
-    mutationFn: async ({ id, updateStatus }) => {
+    mutationFn: async ({ id, updateStatus, type, title }) => {
       const response = await fetch(`/api/notes`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, updateStatus }),
+        body: JSON.stringify({ id, updateStatus, type, title }),
       })
 
-      if (!response.ok) {
+      if (!response.status === 'success') {
         throw new Error('Network response was not ok')
       }
 
-      return response.json()
+      return { type, id }
     },
-    onSuccess: () => {
+    onSuccess: ({ type, id }) => {
       queryClient.invalidateQueries(queryKeys.notes)
     },
     onError: error => {
@@ -89,18 +90,53 @@ export function useGetNotes() {
   const { data, isLoading, error } = useQuery({
     queryKey: [queryKeys.allNotes],
     queryFn: async () => {
-      const response = await fetch('/api/notes')
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
+      const response = await fetch('/api/notes');
+      if (!response.ok) { // Checks if the status code is not in the range 200-299
+        throw new Error('Network response was not ok');
       }
-
-      return response.json()
+      return response.json();
     },
-    onSuccess: data => console.log('Successfully fetched notes: ', data),
-    onError: () => console.log('ERROR:', error),
-  })
-  return { data, isLoading, error }
+    onError: (error) => console.log('ERROR:', error),
+  });
+
+  return { data, isLoading, error };
 }
+
+
+// #### WORKING TO GET NOTES #####
+// export function useGetNotes() {
+//   const queryClient = useQueryClient();
+
+//   const { data, isLoading, error } = useQuery({
+//     queryKey: [queryKeys.allNotes],
+//     queryFn: async () => {
+//       try {
+//         let notes = await getNotesFromIDB();
+//         if (notes.length === 0) {
+//           const response = await fetch('/api/notes');
+//           if (!response.ok) throw new Error('Network response was not ok');
+//           notes = await response.json();
+//           notes.forEach(note => saveNoteToIDB(note));
+//         }
+//         return notes;
+//       } catch (err) {
+//         console.error('Error fetching notes:', err);
+//         throw err;
+//       }
+//     },
+//     onSuccess: data => console.log('Successfully fetched notes: ', data),
+//     onError: err => console.log('ERROR:', err),
+//   });
+
+//   return { data, isLoading, error };
+// }
+
+
+
+
+
+
+
 
 //#### This works server side to delete notes by id
 export function useDeleteNote() {

@@ -1,18 +1,21 @@
-'use client'
 import Navbar from '@/components/navigation/Navbar'
-import styles from 'styled-components'
+import { createClient } from '@/utils/supabase/server'
+import { LayoutStyled } from '@/components/containers/LayoutStyled'
+import { Suspense } from 'react'
 
-const LayoutStyled = styles.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
+export default async function LayoutContainer({ children }) {
+  const supabase = createClient()
+  const { data, error: userError } = await supabase.auth.getUser()
 
-export default function LayoutContainer({ children }) {
+  if (userError) {
+    console.error('getUser error in LayoutContainer: ', userError || null)
+  }
   return (
     <LayoutStyled>
-      <Navbar />
+      <Suspense fallback={<div>Suspenseful</div>} >
+      <Navbar data={data} />
       {children}
+      </Suspense>
     </LayoutStyled>
   )
 }

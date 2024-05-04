@@ -1,15 +1,16 @@
 'use client'
-
-import { useState } from 'react'
 import { Note } from './Note'
 import { NoteForm } from './NoteForm'
 import { EditNoteForm } from './EditNoteForm'
 import styles from 'styled-components'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { useEffect } from 'react'
-// import { deleteNote, addNote, toggleCompletion } from '@/services/api/notesApi'
-import { getNotes } from '@/services/api/notesApi'
-import { QueryClient, useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+
+// import { CSSTransition, TransitionGroup } from 'react-transition-group'
+// import { useEffect } from 'react'
+// // import { deleteNote, addNote, toggleCompletion } from '@/services/api/notesApi'
+// import { getNotes } from '@/services/api/notesApi'
+// import { QueryClient, useQuery } from '@tanstack/react-query'
+
 
 import {
   useDeleteNote,
@@ -17,8 +18,8 @@ import {
   useToggleCompletion,
   useGetNotes,
 } from '@/services/hooks/useNoteTraditional'
-import { queryKeys } from '@/services/constants'
-// import { useGetNotes } from '@/services/hooks/useNote'
+import { clearItemsFromIDB, getItemsFromIDB, saveItemToIDB } from '@/public/idb.js'
+
 
 const NoteWrapperStyled = styles.div`
   background: #1a1a40;
@@ -33,59 +34,68 @@ const NoteWrapperStyled = styles.div`
   text-align:center;
   }
   & p{
-    text-align: center;
+    text-align: left;
     font-style: italic;
   }
 `
 
-function NoteWrapper({ userData, state }) {
-  console.log('state: ', state)
+const SpinnerContainer = styles.div`
+  display: flex;
+  align-contents: center;
+  justify-content: center;
+  width: 100%;
+  height: 60%;
+  `
+
+function NoteWrapper({ userData }) {
+  
   const { deleteNoteMutation } = useDeleteNote()
   const { addNoteMutation } = useAddNote()
   const { toggleCompletionMutation } = useToggleCompletion()
-  const { data: notes, isLoading } = useGetNotes()
+  const { data: fetchNotes, isLoading } = useGetNotes()
+  const [notes, setNotes] = useState()
+  const [dbNotes,setDbNotes] = useState()
+  const [dbData,setDBData] = useState()
 
-  // const { data: notes, isLoading } = useQuery({
-  //   queryKey: [queryKeys.allNotes],
-  //   queryFn: getNotes,
-  // })
+  
 
-  // console.log('new notes: ', notes)
-  // const addNote = note => {
-  //   setNotes([
-  //     ...notes,
-  //     { id: uuidv4(), task: note, completed: false, isEditing: false },
-  //   ])
-  // }
+//  useEffect(()=>{
+// function save(id,status,task){
+// console.log({id:{status,task}})
+//   saveNoteToIDB({id,status,task})
+// }
+// save(id,status,task)
+//  },[])
+  
 
-  // const deleteNote = async id => {
-  //   console.log('deleteNote', id)
-  //   const res = await fetch('', {
-  //     method: 'DELETE',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({ id }),
-  //   })
+  useEffect(() => {
+    const fetchData = () => {
+      try {
+        
+         setDBData(getItemsFromIDB('notes'))
+        
+        
+      } catch (error) {
+        console.log("NoteWrapper ERROR: ",error)
+      }
+     
+      if (!isLoading) {
+        console.log("fetchNotes done loading: ", fetchNotes);
+        setNotes(fetchNotes)
+        clearItemsFromIDB('notes')
+        fetchNotes.forEach((note,index) => saveItemToIDB('notes',{...note}))
+        // saveNoteToIDB(...fetchNotes)
+      }else if (dbData && dbData.length>0) {
+        console.log('dbData: ',Array.from(dbData))
+        setNotes(dbData)
+        return;
+      } else {
+        setNotes([]);
+      }
+    };
 
-  //   if (!res.ok) {
-  //     throw new Error('Error deleting note')
-  //   }
-  // }
-
-  const toggleComplete = id => {
-    setNotes(
-      notes.map(note =>
-        note.id === id ? { ...note, completed: !note.completed } : note
-      )
-    )
-  }
-
-  const editNote = id => {
-    setNotes(
-      notes.map(note =>
-        note.id === id ? { ...note, isEditing: !note.isEditing } : note
-      )
-    )
-  }
+    fetchData();
+  }, [isLoading]);
 
   const editTask = (task, id) => {
     setNotes(
@@ -103,36 +113,68 @@ function NoteWrapper({ userData, state }) {
         <h1> Welcome to Notes 3.0! </h1>
       )}
       <NoteForm addNote={addNoteMutation} />
-      {/* display notes */}
-      <TransitionGroup>
-        {Array.isArray(notes) &&
-          notes
-            .sort((a, b) => a.completed - b.completed)
-            .map(note =>
-              note.isEditing ? (
-                <EditNoteForm editNote={editTask} task={note} />
-              ) : (
-                Array.isArray(notes) && (
-                  <CSSTransition key={note.id} timeout={500} classNames='item'>
-                    <Note
-                      id={note.id}
-                      key={note.id}
-                      task={note.title}
-                      status={note.completed}
-                      deleteNote={deleteNoteMutation}
-                      editNote={editNote}
-                      toggleCompletion={toggleCompletionMutation}
-                      state={state}
-                    />
-                  </CSSTransition>
-                )
+
+
+      {!Array.isArray(notes)?(<SpinnerContainer>
+        Loading data...
+      </SpinnerContainer> ) : 
+        notes
+          .sort((a, b) => {
+          return(a.priority - b.priority)
+          })
+          .map(note =>
+            note.editing ? (
+              <EditNoteForm
+                editNote={editTask}
+                task={note.title}
+                id={note.id}
+              />
+            ) : (
+              Array.isArray(notes) && (
+                <Note
+                  id={note.id}
+                  key={note.id}
+                  task={note.title}
+                  status={note.completed}
+                  deleteNote={deleteNoteMutation}
+                  toggleCompletion={toggleCompletionMutation}
+                  note={note}
+                />
               )
-            )}
-      </TransitionGroup>
+            )
+          )}
+
+//       {/* display notes */}
+//       <TransitionGroup>
+//         {Array.isArray(notes) &&
+//           notes
+//             .sort((a, b) => a.completed - b.completed)
+//             .map(note =>
+//               note.isEditing ? (
+//                 <EditNoteForm editNote={editTask} task={note} />
+//               ) : (
+//                 Array.isArray(notes) && (
+//                   <CSSTransition key={note.id} timeout={500} classNames='item'>
+//                     <Note
+//                       id={note.id}
+//                       key={note.id}
+//                       task={note.title}
+//                       status={note.completed}
+//                       deleteNote={deleteNoteMutation}
+//                       editNote={editNote}
+//                       toggleCompletion={toggleCompletionMutation}
+//                       state={state}
+//                     />
+//                   </CSSTransition>
+//                 )
+//               )
+//             )}
+//       </TransitionGroup>
+
       {!Array.isArray(notes) || (notes.length === 0 && <p>No tasks yet</p>)}
-      {state}
     </NoteWrapperStyled>
   )
 }
 
 export default NoteWrapper
+
