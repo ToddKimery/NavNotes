@@ -1,8 +1,7 @@
-// utils/idb.js
-
+// app/utils
 import { openDB } from 'idb';
 
-const DATABASE_NAME = 'NotesDB';
+const DATABASE_NAME = 'NotesDDB';
 const STORE_NAME = 'notes';
 const VERSION = 1;
 

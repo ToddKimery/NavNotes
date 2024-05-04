@@ -35,15 +35,15 @@ const StyledNote = styled.div`
 `
 
 
-export const Note = ({
+export const Training = ({
   id,
   task,
   status,
-  deleteNote,
+  deleteTraining,
   toggleCompletion,
   color,
   priority,
-  editNote,
+  editTraining,
 }) => {
 
 
@@ -79,7 +79,7 @@ export const Note = ({
         <FontAwesomeIcon
           className='delete-icon'
           icon={faTrash}
-          onClick={() => deleteNote(id)}
+          onClick={() => deleteTraining(id)}
         />
       </div>
     </StyledNote>

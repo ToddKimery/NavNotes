@@ -1,5 +1,3 @@
-// 'use client'
-// import styled from 'styled-components'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import Header from '@/components/Header'
@@ -9,7 +7,7 @@ import {
   LogoStyled,
   LoginStyled,
 } from '@/components/navigation/NavbarStyled'
-import { clearNotesFromIDB } from '@/utils/idb'
+import { signOut } from '@/utils/general'
 
 
 
@@ -22,20 +20,6 @@ export default async function Navbar() {
   } = await supabase.auth.getUser()
   // console.log('user: ', user)
 
-  const signOut = async () => {
-  'use server'
-
-  const supabase = createClient()
-  await supabase.auth.signOut()
-
-  // Clear the IndexedDB NotesDB
- try {
-  'use client'
-    await clearNotesFromIDB()
-  } catch (error) { console.error('Error clearing IDB: ', error) }
-
-  return redirect('/')
-  }
 
   return (
     <NavBarStyled>
@@ -46,7 +30,7 @@ export default async function Navbar() {
           <Link href={'/login'}>Login</Link>
         ) : (
           <form action={signOut}>
-            <button>Logout</button>
+            <div>Logout</div>
           </form>
         )}
       </LoginStyled>

@@ -1,7 +1,3 @@
-'use client'
-import { createClient } from "@/utils/supabasebk/server";
-
-
 
 export default async function Index() {
 

@@ -2,7 +2,7 @@ import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import ReactQueryClientProvider from '@/components/ReactQueryClientProvider'
 import LayoutContainer from '@/components/containers/LayoutContainer'
-import Head from 'next/head'
+import { Metadata } from 'next'
 import ServiceWorkerReg from '@/components/serviceworker/ServiceWorkerReg'
 
 const defaultUrl = process.env.VERCEL_URL
@@ -17,8 +17,6 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
 }) {
   return (
     <html lang='en' className={GeistSans.className}>
@@ -26,14 +24,14 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className='bg-background text-foreground'>
+          <LayoutContainer>
         <ReactQueryClientProvider>
         <ServiceWorkerReg/>
-          <LayoutContainer>
             <main className='min-h-screen flex flex-col items-center'>
               {children}
             </main>
-          </LayoutContainer>
         </ReactQueryClientProvider>
+          </LayoutContainer>
       </body>
     </html>
   )

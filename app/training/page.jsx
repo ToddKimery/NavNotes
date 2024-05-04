@@ -1,17 +1,16 @@
 import { createClient } from '@/utils/supabase/server'
-import NoteWrapper from '@/components/notes/NoteWrapper.jsx'
+import TrainingWrapper from '@/components/training/TrainingWrapper.jsx'
 import { redirect } from 'next/navigation'
 import {
   QueryClient,
 } from '@tanstack/react-query'
 
-
 export const metadata = {
-  title: 'Notes 3.0',
+  title: 'Training 3.0',
   description: 'The best way to stay on top of your game.',
 }
-export default async function Notes() {
- 
+
+export default async function Training() {
   const queryClient = new QueryClient()
   const supabase = createClient()
   const {
@@ -19,10 +18,10 @@ export default async function Notes() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return redirect(`/login?redirect=notes`)
+    return redirect(`/login?redirect=training`)
   }
 
-  const { data: notes } = await supabase.from('notes').select()
+  const { data: training } = await supabase.from('training').select()
   const { data: userData, error } = await supabase.from('users').select()
 
 
@@ -31,7 +30,7 @@ export default async function Notes() {
     .channel('custom-all-channel')
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'notes' },
+      { event: '*', schema: 'public', table: 'training' },
       payload => {
         console.log('Change received!', payload)
       }
@@ -40,11 +39,11 @@ export default async function Notes() {
 
   return (
     <>
-      
-        <title>Notes</title>
-      
+      <>
+        <title>Training</title>
+      </>
 
-        <NoteWrapper notes={notes} userData={userData} />
+        <TrainingWrapper userData={userData} />
 
 
     </>

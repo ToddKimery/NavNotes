@@ -1,8 +1,7 @@
-// 'use client'
-// import { useEffect, useState } from 'react'
 import Navbar from '@/components/navigation/Navbar'
 import { createClient } from '@/utils/supabase/server'
 import { LayoutStyled } from '@/components/containers/LayoutStyled'
+import { Suspense } from 'react'
 
 export default async function LayoutContainer({ children }) {
   const supabase = createClient()
@@ -13,8 +12,10 @@ export default async function LayoutContainer({ children }) {
   }
   return (
     <LayoutStyled>
+      <Suspense fallback={<div>Suspenseful</div>} >
       <Navbar data={data} />
       {children}
+      </Suspense>
     </LayoutStyled>
   )
 }

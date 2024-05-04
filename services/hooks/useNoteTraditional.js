@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { queryKeys } from '@/services/constants'
-import { getNotesFromIDB, saveNoteToIDB } from '@/utils/idb';
+
 
 import {
   addNote,

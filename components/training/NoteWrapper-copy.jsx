@@ -1,9 +1,10 @@
 'use client'
+
+import { useState } from 'react'
 import { Note } from './Note'
 import { NoteForm } from './NoteForm'
 import { EditNoteForm } from './EditNoteForm'
 import styles from 'styled-components'
-import { useEffect, useState } from 'react'
 
 import {
   useDeleteNote,
@@ -11,7 +12,6 @@ import {
   useToggleCompletion,
   useGetNotes,
 } from '@/services/hooks/useNoteTraditional'
-import { clearItemsFromIDB, getItemsFromIDB, saveItemToIDB } from '@/public/idb.js'
 
 
 const NoteWrapperStyled = styles.div`
@@ -27,68 +27,16 @@ const NoteWrapperStyled = styles.div`
   text-align:center;
   }
   & p{
-    text-align: left;
+    text-align: center;
     font-style: italic;
   }
 `
 
-const SpinnerContainer = styles.div`
-  display: flex;
-  align-contents: center;
-  justify-content: center;
-  width: 100%;
-  height: 60%;
-  `
-
 function NoteWrapper({ userData }) {
-  
   const { deleteNoteMutation } = useDeleteNote()
   const { addNoteMutation } = useAddNote()
   const { toggleCompletionMutation } = useToggleCompletion()
-  const { data: fetchNotes, isLoading } = useGetNotes()
-  const [notes, setNotes] = useState()
-  const [dbNotes,setDbNotes] = useState()
-  const [dbData,setDBData] = useState()
-
-  
-
-//  useEffect(()=>{
-// function save(id,status,task){
-// console.log({id:{status,task}})
-//   saveNoteToIDB({id,status,task})
-// }
-// save(id,status,task)
-//  },[])
-  
-
-  useEffect(() => {
-    const fetchData = () => {
-      try {
-        
-         setDBData(getItemsFromIDB('notes'))
-        
-        
-      } catch (error) {
-        console.log("NoteWrapper ERROR: ",error)
-      }
-     
-      if (!isLoading) {
-        console.log("fetchNotes done loading: ", fetchNotes);
-        setNotes(fetchNotes)
-        clearItemsFromIDB('notes')
-        fetchNotes.forEach((note,index) => saveItemToIDB('notes',{...note}))
-        // saveNoteToIDB(...fetchNotes)
-      }else if (dbData && dbData.length>0) {
-        console.log('dbData: ',Array.from(dbData))
-        setNotes(dbData)
-        return;
-      } else {
-        setNotes([]);
-      }
-    };
-
-    fetchData();
-  }, [isLoading]);
+  const { data: notes, isLoading } = useGetNotes()
 
   const editTask = (task, id) => {
     setNotes(
@@ -107,12 +55,11 @@ function NoteWrapper({ userData }) {
       )}
       <NoteForm addNote={addNoteMutation} />
 
-      {!Array.isArray(notes)?(<SpinnerContainer>
-        Loading data...
-      </SpinnerContainer> ) : 
+      {Array.isArray(notes) &&
         notes
           .sort((a, b) => {
-          return(a.priority - b.priority)
+            console.log('a', a.priority, 'b', b.priority)
+            return a.priority - b.priority
           })
           .map(note =>
             note.editing ? (
@@ -130,7 +77,6 @@ function NoteWrapper({ userData }) {
                   status={note.completed}
                   deleteNote={deleteNoteMutation}
                   toggleCompletion={toggleCompletionMutation}
-                  note={note}
                 />
               )
             )
@@ -141,4 +87,3 @@ function NoteWrapper({ userData }) {
 }
 
 export default NoteWrapper
-
