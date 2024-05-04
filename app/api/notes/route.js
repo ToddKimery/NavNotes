@@ -12,12 +12,14 @@ export const GET = async req => {
   return NextResponse.json(notes)
 }
 
+
 // export async function deleteNote(id) {
 //   const { error } = await supabase.from('notes').delete().eq('id', id)
 //   if (error) {
 //     throw error
 //   }
 // }
+
 
 // #### DELETE SELECTED NOTE ####
 export const DELETE = async (req, res) => {

@@ -5,6 +5,13 @@ import { EditNoteForm } from './EditNoteForm'
 import styles from 'styled-components'
 import { useEffect, useState } from 'react'
 
+// import { CSSTransition, TransitionGroup } from 'react-transition-group'
+// import { useEffect } from 'react'
+// // import { deleteNote, addNote, toggleCompletion } from '@/services/api/notesApi'
+// import { getNotes } from '@/services/api/notesApi'
+// import { QueryClient, useQuery } from '@tanstack/react-query'
+
+
 import {
   useDeleteNote,
   useAddNote,
@@ -107,6 +114,7 @@ function NoteWrapper({ userData }) {
       )}
       <NoteForm addNote={addNoteMutation} />
 
+
       {!Array.isArray(notes)?(<SpinnerContainer>
         Loading data...
       </SpinnerContainer> ) : 
@@ -135,6 +143,34 @@ function NoteWrapper({ userData }) {
               )
             )
           )}
+
+//       {/* display notes */}
+//       <TransitionGroup>
+//         {Array.isArray(notes) &&
+//           notes
+//             .sort((a, b) => a.completed - b.completed)
+//             .map(note =>
+//               note.isEditing ? (
+//                 <EditNoteForm editNote={editTask} task={note} />
+//               ) : (
+//                 Array.isArray(notes) && (
+//                   <CSSTransition key={note.id} timeout={500} classNames='item'>
+//                     <Note
+//                       id={note.id}
+//                       key={note.id}
+//                       task={note.title}
+//                       status={note.completed}
+//                       deleteNote={deleteNoteMutation}
+//                       editNote={editNote}
+//                       toggleCompletion={toggleCompletionMutation}
+//                       state={state}
+//                     />
+//                   </CSSTransition>
+//                 )
+//               )
+//             )}
+//       </TransitionGroup>
+
       {!Array.isArray(notes) || (notes.length === 0 && <p>No tasks yet</p>)}
     </NoteWrapperStyled>
   )
