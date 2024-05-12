@@ -61,34 +61,34 @@ function NoteWrapper({ userData }) {
 //  },[])
   
 
-  useEffect(() => {
-    const fetchData = () => {
-      try {
+  // useEffect(() => {
+  //   const fetchData = () => {
+  //     try {
         
-         setDBData(getItemsFromIDB('notes'))
+  //        setDBData(getItemsFromIDB('notes'))
         
         
-      } catch (error) {
-        console.log("NoteWrapper ERROR: ",error)
-      }
+  //     } catch (error) {
+  //       console.log("NoteWrapper ERROR: ",error)
+  //     }
      
-      if (!isLoading) {
-        console.log("fetchNotes done loading: ", fetchNotes);
-        setNotes(fetchNotes)
-        clearItemsFromIDB('notes')
-        fetchNotes.forEach((note,index) => saveItemToIDB('notes',{...note}))
-        // saveNoteToIDB(...fetchNotes)
-      }else if (dbData && dbData.length>0) {
-        console.log('dbData: ',Array.from(dbData))
-        setNotes(dbData)
-        return;
-      } else {
-        setNotes([]);
-      }
-    };
+  //     if (!isLoading) {
+  //       // console.log("fetchNotes done loading: ", fetchNotes);
+  //       setNotes(fetchNotes)
+  //       clearItemsFromIDB('notes')
+  //       notes.forEach((note,index) => saveItemToIDB('notes',{...note}))
+  //       // saveNoteToIDB(...fetchNotes)
+  //     }else if (dbData && dbData.length>0) {
+  //       console.log('dbData: ',Array.from(dbData))
+  //       setNotes(dbData)
+  //       return;
+  //     } else {
+  //       setNotes([]);
+  //     }
+  //   };
 
-    fetchData();
-  }, [isLoading]);
+  //   fetchData();
+  // }, [isLoading]);
 
   const editTask = (task, id) => {
     setNotes(
@@ -120,6 +120,7 @@ function NoteWrapper({ userData }) {
                 editNote={editTask}
                 task={note.title}
                 id={note.id}
+                key={note.id}
               />
             ) : (
               Array.isArray(notes) && (

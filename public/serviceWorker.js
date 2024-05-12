@@ -1,8 +1,50 @@
+// import * as idb from 'idb'
+import * as idb from '/packageIdb.js'
+
+ const CACHE_NAME = 'v1';
+ const URLS_TO_CACHE = [
+     '/',
+     '/notes',
+     '/packageIdb.js',
+     '/training',  
+ ];
+
+ self.addEventListener('install', event => {
+     event.waitUntil(
+         caches.open(CACHE_NAME)
+             .then(cache => {
+                 console.log('Opened cache');
+                 return cache.addAll(URLS_TO_CACHE);
+             })
+     );
+ });
+
+// async function createStoreInDB () {
+const NotesDB =async ()=>{await idb.openDB('myDB', 1, {
+    upgrade (db) {
+      console.log('...checking for object store')
+
+      if(!db.objectStoreNames.contains('NotesStore')) {
+        console.log('creating object store')
+      db.createObjectStore('NotesStore', { keyPath: 'id' });
+      if(!db.objectStoreNames.contains('TrainingStore')) {
+        console.log('creating object store')
+      db.createObjectStore('TrainingStore', { keyPath: 'id' });
+    }
+  }
+  return NotesDB
+}
+}
+)
+}
+// createStoreInDB()
+
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   // Using URL pathname to decide the handling strategy
   if (url.pathname.startsWith('/api/notes')) {
+    console.log("Notes requested: ",url.pathname)
     event.respondWith(handleApiNotesRequest(event.request));
   } else if (url.pathname.startsWith('/api/training')) {
     event.respondWith(handleApiTrainingRequest(event.request));
@@ -12,22 +54,25 @@ self.addEventListener('fetch', event => {
 });
 
 async function handleApiNotesRequest(request) {
-  const db = await initDB();
-  const allNotes = await db.getAll('notes');
+  
+  const allNotes = await NotesDB.get('notes');
   if (allNotes.length > 0) {
+    console.log("We have notes")
     return new Response(JSON.stringify(allNotes), { headers: { 'Content-Type': 'application/json' } });
   } else {
     const response = await fetch(request);
     const notes = await response.json();
-    notes.forEach(note => {
-      db.put('notes', note);
-    });
+    console.log("Got notes: ",notes)
+    await NotesDb.add('notes', notes);
+    // notes.forEach(note => {
+    //   db.put('notes', note);
+    // });
     return new Response(JSON.stringify(notes), { headers: { 'Content-Type': 'application/json' } });
   }
 }
 
 async function handleApiTrainingRequest(request) {
-  const db = await initDB();
+  
   const allTraining = await db.getAll('training');
   if (allTraining.length > 0) {
     return new Response(JSON.stringify(allTraining), { headers: { 'Content-Type': 'application/json' } });

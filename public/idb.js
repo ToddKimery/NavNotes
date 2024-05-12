@@ -1,12 +1,12 @@
 // public/idb.js
-import { openDB, deleteDB } from 'idb';
+
 
 const DATABASE_NAME = 'myDB';
 const VERSION = 1;
 
 // Initialize the database
-async function initDB(storeName) {
-  const db = await openDB(DATABASE_NAME, VERSION, {
+ async function initDB(storeName) {
+  const db = await idb.openDB(DATABASE_NAME, VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains(storeName)) {
         db.createObjectStore(storeName, { keyPath: 'id' });
@@ -18,13 +18,13 @@ async function initDB(storeName) {
 }
 
 // Fetch all items from the IndexedDB
-export async function getItemsFromIDB(storeName) {
+  async function getItemsFromIDB(storeName) {
   const db = await initDB(storeName);
   return db.getAll(storeName);
 }
 
 // Save an item to IndexedDB
-export async function saveItemToIDB(storeName, item) {
+  async function saveItemToIDB(storeName, item) {
   const db = await initDB(storeName);
   const tx = db.transaction(storeName, 'readwrite');
   await tx.store.put(item);
@@ -32,7 +32,7 @@ export async function saveItemToIDB(storeName, item) {
 }
 
 // Delete an item from IndexedDB
-export async function deleteItemFromIDB(storeName, id) {
+  async function deleteItemFromIDB(storeName, id) {
   const db = await initDB(storeName);
   const tx = db.transaction(storeName, 'readwrite');
   await tx.store.delete(id);
@@ -40,7 +40,7 @@ export async function deleteItemFromIDB(storeName, id) {
 }
 
 // Clear all items from IndexedDB
-export async function clearItemsFromIDB(storeName) {
+  async function clearItemsFromIDB(storeName) {
   const db = await initDB(storeName);
   const tx = db.transaction(storeName, 'readwrite');
   const store = tx.objectStore(storeName);
@@ -49,7 +49,7 @@ export async function clearItemsFromIDB(storeName) {
 }
 
 // Update an item in IndexedDB
-export async function updateItemInIDB(storeName, item) {
+  async function updateItemInIDB(storeName, item) {
   const db = await initDB(storeName);
   const tx = db.transaction(storeName, 'readwrite');
   await tx.store.put(item);
@@ -57,6 +57,6 @@ export async function updateItemInIDB(storeName, item) {
 }
 
 // Delete the database
-export async function deleteDatabase(databaseName = DATABASE_NAME) {
+  async function deleteDatabase(databaseName = DATABASE_NAME) {
   await deleteDB(databaseName);
 }

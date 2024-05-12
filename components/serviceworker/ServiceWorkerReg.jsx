@@ -19,7 +19,7 @@ export default function ServiceWorkerReg() {
     if ('serviceWorker' in navigator) {
       console.log('Service Worker Available in Navigator', navigator.serviceWorker);
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/serviceWorker.js', { scope: '/' })
+            navigator.serviceWorker.register('/serviceWorker.js', { type:'module'})
                 .then(registration => {
                     console.log('Service Worker registered:', registration);
                 })

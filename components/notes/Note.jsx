@@ -11,7 +11,7 @@ const StyledNote = styled.div`
   justify-content: space-between;
   align-items: center;
   background: ${props => props.color || '#8758ff'};
-  color: #fff;
+  color: #ffffff;
   padding: 0.75rem 1rem;
   border-radius: 5px;
   margin-bottom: 1rem;

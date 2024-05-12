@@ -62,33 +62,33 @@ function TrainingWrapper({ userData }) {
 //  },[])
   
 
-  useEffect(() => {
-    const fetchData = () => {
-      try {
+  // useEffect(() => {
+  //   const fetchData = () => {
+  //     try {
         
-          setDBData(getItemsFromIDB('notes'))
+  //         setDBData(getItemsFromIDB('notes'))
         
-      } catch (error) {
-        console.log("TrainingWrapper ERROR: ",error)
-      }
+  //     } catch (error) {
+  //       console.log("TrainingWrapper ERROR: ",error)
+  //     }
      
-      if (!isLoading) {
-        console.log("fetchTraining done loading: ", fetchTraining);
-        setTraining(fetchTraining)
-        clearItemsFromIDB('training')
-        fetchTraining.forEach(course => saveItemToIDB('training',{...course}))
-        // saveTrainingToIDB(...fetchTraining)
-      }else if (dbData && dbData.length>0) {
-        console.log('dbData: ',Array.from(dbData))
-        setTraining(dbData)
-        return;
-      } else {
-        setTraining([]);
-      }
-    };
+  //     if (!isLoading && fetchTraining && fetchTraining.length > 0) {
+  //       console.log("fetchTraining done loading: ", fetchTraining);
+  //       setTraining(fetchTraining)
+  //       clearItemsFromIDB('training')
+  //       // fetchTraining.forEach(course => saveItemToIDB('training',{...course}))
+  //       // saveTrainingToIDB(...fetchTraining)
+  //     }else if (dbData && dbData.length>0) {
+  //       console.log('dbData: ',Array.from(dbData))
+  //       setTraining(dbData)
+  //       return;
+  //     } else {
+  //       setTraining([]);
+  //     }
+  //   };
 
-    fetchData();
-  }, [isLoading]);
+  //   fetchData();
+  // }, [isLoading]);
 
   const editTask = (task, id) => {
     setTraining(
